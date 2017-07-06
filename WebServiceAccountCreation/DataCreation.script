@@ -1,0 +1,27 @@
+// Run from Work Bench
+
+GenX_DataCreationHelper.InMap inValues = new GenX_DataCreationHelper.InMap();
+
+inValues.put ('AccountNumber','99-0002');
+inValues.put ('Name','GENX ACCT O2C 99-0002');
+
+System.Debug ('##### BEFORE BEGIN ##### Map now contains');
+for (String skey : inValues.retainVal.keySet()) {
+      
+      // The "key" variable is also available inside the loop
+      System.Debug ('key (' + skey + '), value (' + inValues.get(skey) + ')');
+}
+System.Debug ('##### BEFORE END ##### Map now contains');
+
+inValues = GenX_DataCreationHelper.createAccount(inValues);
+
+System.Debug ('##### AFTER END ##### Map now contains');
+
+for (String skey : inValues.retainVal.keySet()) {
+      
+      // The "key" variable is also available inside the loop
+      System.Debug ('key (' + skey + '), value (' + inValues.get(skey) + ')');
+}
+
+System.Debug ('##### AFTER END ##### Map now contains');
+
