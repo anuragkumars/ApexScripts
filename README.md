@@ -39,3 +39,24 @@ See commented lines for usage
 - Additional Objects can be created as well by simply leveraging on this concept.
 
 
+## C: Project: GenericDataCreation
+
+Contains 3 files:
+
+### GenericSObject_Util.cls
+- This defines generic methods to create / query data for any SObject
+
+### DataSetTestClass.cls
+- This defines data set combinations for different SObjects being used for specific projects (meta for those SObjects not included)
+
+### Misc_BillingTest.cls
+- This defines test methods using above above two classes and some more to implement few test cases
+
+- Need to deploy all these three, in the order listed, in Salesforce Org.
+- Follow these steps:
+  Login to Salesforce Org
+  Setup -> Build -> Develop -> Apex Classes -> New
+  Copy and paste the contents of this .cls file
+  Save
+ - Run Tests in Misc_BillingTest.cls from Developer Console or integrate with ant scripts to run.
+
