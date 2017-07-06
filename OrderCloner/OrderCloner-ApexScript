@@ -1,0 +1,470 @@
+//// *********************************************
+//// BEGIN: MODIFY IN THIS BLOCK ONLY ************
+//// Version: 5, Anurag, 1/12/2017    ************
+//// *********************************************
+
+// This is the order number you want to clone along with its contract
+// Change this number as and when needed
+String orderNum = '08065827';
+
+Boolean bActivateContract = false;
+Boolean bActivateOrder    = false;
+
+// Set this to true if you want to use another contract 
+Boolean bContractAdded = false;
+
+Boolean bOrderAdded = false;
+
+// For ramp, allow order end date to be selected
+Boolean bSelectOrderEndDate = true;
+
+
+// 2016, 1, 12 = Year, Month, Day
+// Change Year, Month, Day as needed to change Contract start date
+Date myDate = Date.newInstance(2017, 1, 1);
+Date myDate2 = Date.newInstance(2017, 12, 31);
+
+
+// Add key/values to this map if doing override, like
+// OrderItem.0.UnitPrice = 100.1
+// OrderItem.2.Quantity  = 1.0;
+Map <String,Object> overRideValuesMap = new Map <String,Object> ();
+
+// Uncomment or Comment lines, starting with overRideValuesMap, below as needed
+//overRideValuesMap.put ('Contract.0.AccountId','0013000001J7ROhAAN');
+//overRideValuesMap.put ('Contract.0.ContractTerm',12);
+//overRideValuesMap.put ('Contract.0.StartDate', myDate);
+//overRideValuesMap.put ('Order.0.EffectiveDate', myDate);
+
+// over ride order end date
+//overRideValuesMap.put ('Order.0.sfbase__OrderEndDate__c', myDate2);
+
+//overRideValuesMap.put ('Order.0.ContractId',enter value here);
+//overRideValuesMap.put ('OrderItem.0.Quantity',10);
+//overRideValuesMap.put ('OrderItem.2.Quantity',10);
+
+
+
+
+/*************************************************
+ README:
+
+ 1) This script will take input as:
+ orderNum = Order number being cloned
+ 
+ 2) Additional mods (optional) as needed to set key/values in
+ Map overRideValuesMap.
+
+ Supported override values
+
+ Contract.0.AccountId
+ Contract.0.StartDate
+ Contract.0.ContractTerm
+ Contract.0.RenewalDays
+ Contract.0.RenewalTerm
+ Contract.0.OrderPrebillDays
+ Contract.0.sfbase__Billing_Frequency__c
+ Order.0.EffectiveDate
+ Order.0.Type
+ Order.0.ContractId
+ OrderItem.0.Quantity
+ OrderItem.0.UnitPrice
+
+*************************************************/
+
+
+//// *********************************************
+//// END: MODIFY IN THIS BLOCK ONLY **************
+//// *********************************************
+
+
+//// DO NOT MODIFY ANYTHING BELOW THIS LINE
+
+List <OrderItem> orderItemList = [SELECT
+OrderId,
+sfbill__DoNotBill__c,
+PricebookEntryId,
+UnitPrice,
+Quantity,
+OrderItemNumber,
+ConfigurationType__c,
+Order.ContractId,
+Order.EffectiveDate,
+Order.Status,
+Order.sfbase__OrderEndDate__c,
+Order.sfbase__OrderTermAps__c,
+Order.CurrencyIsoCode,
+Order.Type,
+Order.RecordTypeId,
+Order.Order_Sub_type__c,
+Order.sfbase__Opportunity__c,
+Order.sfbase__ExceptionComments__c,
+Order.PoNumber,
+Order.sfbase__POAmount__c,
+Order.sfbase__DealRelationshipNext__c,
+Order.SfdcRelatedQuote__c,
+Order.ProcessingInstruction,
+Order.ExternalNote,
+Order.InternalComments,
+Order.sfbase__RevenueProcessingStatus__c, 
+Order.sfbase__OldMonthlyNumericValue__c,
+Order.sfbase__OldWeightedAverageTerm__c,
+Order.sfbase__OldWeightedAverageRemainingTerm__c,
+Order.sfbase__IsActivatedAfterDealCalculations__c,
+Order.sfbase__NewMonthlyNumericValue__c,
+Order.sfbase__NewWeightedAverageTerm__c,
+Order.sfbase__NextDealStatus__c ,
+Order.sfbase__CEOHold__c,
+Order.sfbase__IncrementalACVPct__c,
+Order.AePct,
+Order.sfbase__RMPct__c,
+Order.Commission_Audit_Comments__c,
+Order.sfbase__CustomerPORequired__c,
+Order.sfbase__Order_Class__c,
+Order.Contract.AccountId,
+Order.Contract.StartDate,
+Order.Contract.BillingFirstName,
+Order.Contract.BillingLastName,
+Order.Contract.SELA_Contract__c,
+Order.Contract.sfbase__Direct_Debit_Status__c,
+Order.Contract.Status,
+Order.Contract.sfbase__MaskedBankAccountNumber__c,
+Order.Contract.sfbase__BankAccountType__c,
+Order.Contract.BillingEmail,
+Order.Contract.BillingStreet,
+Order.Contract.BillingCity,
+Order.Contract.BillingState,
+Order.Contract.BillingPostalCode,
+Order.Contract.BillingCountry,
+Order.Contract.ShippingStreet,
+Order.Contract.ShippingCity,
+Order.Contract.ShippingState,
+Order.Contract.ShippingPostalCode,
+Order.Contract.ShippingCountry,
+Order.Contract.PaymentType,
+Order.Contract.PaymentTerm,
+Order.Contract.AutoRenewCode,
+Order.Contract.RenewalDays,
+Order.Contract.RenewalTerm,
+Order.Contract.OrderPrebillDays,
+Order.Contract.BillingLanguage,
+Order.Contract.Pricebook2Id,
+Order.Contract.BillingPhone,
+Order.Contract.BillingFax,
+Order.Contract.sfbase__Billing_Frequency__c,
+Order.Contract.BillingCompany,
+Order.Contract.BillingSalutation,
+Order.Contract.ContractTerm,
+Order.Contract.sfbase__ContractType__c,
+Order.Contract.sfbase__MaskedCreditCardNumber__c,
+Order.Contract.sfbase__CreditCardType__c,
+Order.Contract.sfbase__CreditCardExpirationMth__c,
+Order.Contract.sfbase__CreditCardExpirationYr__c,
+Order.Contract.sfbase__merchantId__c,
+Order.Contract.sfbase__PaymentFirstName__c,
+Order.Contract.sfbase__PaymentLastName__c,
+Order.Contract.sfbase__PO_Number__c,
+Order.Contract.sfbase__PaymentToken__c,
+Order.Contract.InvoiceDispatchMethod,
+Order.Contract.CurrencyIsoCode,
+Order.Contract.SfdcCustomerVATExemptionReason__c,
+Order.Contract.sfbase__Customer_VAT_Number__c,
+Order.Contract.sfbase__Allow_As_Is_Renewal__c,
+Order.Contract.sfbase__BillingContact__c,
+Order.Contract.sfbase__PaymentType__c,
+Order.Contract.UpdateContext__c,
+Order.Contract.sfbase__ClonePaymentInfo__c,
+Order.Contract.TaxExemptionCode,
+Order.Contract.sfbase__TaxExemptType__c,
+Order.Contract.sfbase__Edition__c,
+Order.Contract.sfbase__BillingFrequencyMultiplier__c,
+Order.Contract.CustomerType__c
+from OrderItem
+where Order.OrderNumber = :orderNum
+Order by OrderItemNumber asc];
+
+List <Contract> createContractsList = new List <Contract> ();
+List <Order> createOrdersList = new List <Order> ();
+List <OrderItem> createOrderItemsList = new List <OrderItem> ();
+
+Contract  addContract;
+Order     addOrder;
+OrderItem addOrderItem;
+String sKey;
+
+for (Integer ix = 0; ix < orderItemList.size(); ix++) {
+  addContract  = new Contract ();
+  addOrder     = new Order ();
+  addOrderItem = new OrderItem ();
+
+OrderItem oneItem;
+oneItem = orderItemList.get(ix);
+
+// Contract Fields
+// Set this to true to bypass Contract creation
+if (!bContractAdded)
+{
+  
+  bContractAdded = true;
+
+
+
+addContract.AccountId=oneItem.Order.Contract.AccountId;
+addContract.StartDate=oneItem.Order.Contract.StartDate;
+addContract.BillingFirstName=oneItem.Order.Contract.BillingFirstName;
+addContract.BillingLastName=oneItem.Order.Contract.BillingLastName;
+addContract.SELA_Contract__c=oneItem.Order.Contract.SELA_Contract__c;
+addContract.sfbase__Direct_Debit_Status__c=oneItem.Order.Contract.sfbase__Direct_Debit_Status__c;
+//addContract.Status=oneItem.Order.Contract.Status;
+addContract.Status='Draft';
+addContract.sfbase__MaskedBankAccountNumber__c=oneItem.Order.Contract.sfbase__MaskedBankAccountNumber__c;
+addContract.sfbase__BankAccountType__c=oneItem.Order.Contract.sfbase__BankAccountType__c;
+addContract.BillingEmail=oneItem.Order.Contract.BillingEmail;
+addContract.BillingStreet=oneItem.Order.Contract.BillingStreet;
+addContract.BillingCity=oneItem.Order.Contract.BillingCity;
+addContract.BillingState=oneItem.Order.Contract.BillingState;
+addContract.BillingPostalCode=oneItem.Order.Contract.BillingPostalCode;
+addContract.BillingCountry=oneItem.Order.Contract.BillingCountry;
+addContract.ShippingStreet=oneItem.Order.Contract.ShippingStreet;
+addContract.ShippingCity=oneItem.Order.Contract.ShippingCity;
+addContract.ShippingState=oneItem.Order.Contract.ShippingState;
+addContract.ShippingPostalCode=oneItem.Order.Contract.ShippingPostalCode;
+addContract.ShippingCountry=oneItem.Order.Contract.ShippingCountry;
+addContract.PaymentType=oneItem.Order.Contract.PaymentType;
+addContract.PaymentTerm=oneItem.Order.Contract.PaymentTerm;
+addContract.AutoRenewCode=oneItem.Order.Contract.AutoRenewCode;
+addContract.RenewalDays=oneItem.Order.Contract.RenewalDays;
+addContract.RenewalTerm=oneItem.Order.Contract.RenewalTerm;
+addContract.OrderPrebillDays=oneItem.Order.Contract.OrderPrebillDays;
+addContract.BillingLanguage=oneItem.Order.Contract.BillingLanguage;
+addContract.Pricebook2Id=oneItem.Order.Contract.Pricebook2Id;
+addContract.BillingPhone=oneItem.Order.Contract.BillingPhone;
+addContract.BillingFax=oneItem.Order.Contract.BillingFax;
+addContract.sfbase__Billing_Frequency__c=oneItem.Order.Contract.sfbase__Billing_Frequency__c;
+addContract.BillingCompany=oneItem.Order.Contract.BillingCompany;
+addContract.BillingSalutation=oneItem.Order.Contract.BillingSalutation;
+addContract.ContractTerm=oneItem.Order.Contract.ContractTerm;
+addContract.sfbase__ContractType__c=oneItem.Order.Contract.sfbase__ContractType__c;
+addContract.sfbase__MaskedCreditCardNumber__c=oneItem.Order.Contract.sfbase__MaskedCreditCardNumber__c;
+addContract.sfbase__CreditCardType__c=oneItem.Order.Contract.sfbase__CreditCardType__c;
+addContract.sfbase__CreditCardExpirationMth__c=oneItem.Order.Contract.sfbase__CreditCardExpirationMth__c;
+addContract.sfbase__CreditCardExpirationYr__c=oneItem.Order.Contract.sfbase__CreditCardExpirationYr__c;
+addContract.sfbase__merchantId__c=oneItem.Order.Contract.sfbase__merchantId__c;
+addContract.sfbase__PaymentFirstName__c=oneItem.Order.Contract.sfbase__PaymentFirstName__c;
+addContract.sfbase__PaymentLastName__c=oneItem.Order.Contract.sfbase__PaymentLastName__c;
+addContract.sfbase__PO_Number__c=oneItem.Order.Contract.sfbase__PO_Number__c;
+addContract.sfbase__PaymentToken__c=oneItem.Order.Contract.sfbase__PaymentToken__c;
+addContract.InvoiceDispatchMethod=oneItem.Order.Contract.InvoiceDispatchMethod;
+addContract.CurrencyIsoCode=oneItem.Order.Contract.CurrencyIsoCode;
+addContract.SfdcCustomerVATExemptionReason__c=oneItem.Order.Contract.SfdcCustomerVATExemptionReason__c;
+addContract.sfbase__Customer_VAT_Number__c=oneItem.Order.Contract.sfbase__Customer_VAT_Number__c;
+addContract.sfbase__Allow_As_Is_Renewal__c=oneItem.Order.Contract.sfbase__Allow_As_Is_Renewal__c;
+addContract.sfbase__BillingContact__c=oneItem.Order.Contract.sfbase__BillingContact__c;
+addContract.sfbase__PaymentType__c=oneItem.Order.Contract.sfbase__PaymentType__c;
+addContract.UpdateContext__c=oneItem.Order.Contract.UpdateContext__c;
+addContract.sfbase__ClonePaymentInfo__c=oneItem.Order.Contract.sfbase__ClonePaymentInfo__c;
+addContract.TaxExemptionCode=oneItem.Order.Contract.TaxExemptionCode;
+addContract.sfbase__TaxExemptType__c=oneItem.Order.Contract.sfbase__TaxExemptType__c;
+addContract.sfbase__Edition__c=oneItem.Order.Contract.sfbase__Edition__c;
+addContract.sfbase__BillingFrequencyMultiplier__c=oneItem.Order.Contract.sfbase__BillingFrequencyMultiplier__c;
+
+addContract.CustomerType__c=oneItem.Order.Contract.CustomerType__c;
+
+    // Override stuff now
+    sKey = 'Contract.' + ix + '.AccountId';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.AccountId = (Id) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.StartDate';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.StartDate = (Date) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.ContractTerm';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.ContractTerm = (Integer) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.RenewalDays';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.RenewalDays = (Integer) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.RenewalTerm';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.RenewalTerm = (Integer) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.OrderPrebillDays';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.OrderPrebillDays = (Integer) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Contract.' + ix + '.sfbase__Billing_Frequency__c';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addContract.sfbase__Billing_Frequency__c = (String) overRideValuesMap.get (sKey);
+    }
+
+
+  createContractsList.add (addContract);
+  System.Debug ('Added Contract For : ' + oneItem.Id);
+
+}
+
+// Order Fields
+if (!bOrderAdded)
+{
+
+    
+
+  //addOrder.ContractId=oneItem.Order.ContractId;
+    addOrder.EffectiveDate=oneItem.Order.EffectiveDate;
+    //addOrder.Status=oneItem.Order.Status;
+    addOrder.Status='Draft';
+
+    if (bSelectOrderEndDate) {
+       addOrder.sfbase__OrderEndDate__c=oneItem.Order.sfbase__OrderEndDate__c;
+    }
+
+    //addOrder.=oneItem.Order.sfbase__OrderEndDate__c;
+    //addOrder.=oneItem.Order.sfbase__OrderTermAps__c;
+
+    addOrder.CurrencyIsoCode=oneItem.Order.CurrencyIsoCode;
+    addOrder.Type=oneItem.Order.Type;
+    addOrder.RecordTypeId=oneItem.Order.RecordTypeId;
+    addOrder.Order_Sub_type__c=oneItem.Order.Order_Sub_type__c;
+
+    // Added
+
+addOrder.sfbase__Opportunity__c=oneItem.Order.sfbase__Opportunity__c;
+addOrder.sfbase__ExceptionComments__c=oneItem.Order.sfbase__ExceptionComments__c;
+addOrder.PoNumber=oneItem.Order.PoNumber;
+addOrder.sfbase__POAmount__c=oneItem.Order.sfbase__POAmount__c;
+//Not writeable
+//addOrder.sfbase__DealRelationshipNext__c=oneItem.Order.sfbase__DealRelationshipNext__c;
+addOrder.SfdcRelatedQuote__c=oneItem.Order.SfdcRelatedQuote__c;
+addOrder.ProcessingInstruction=oneItem.Order.ProcessingInstruction;
+addOrder.ExternalNote=oneItem.Order.ExternalNote;
+addOrder.InternalComments=oneItem.Order.InternalComments;
+addOrder.sfbase__RevenueProcessingStatus__c=oneItem.Order.sfbase__RevenueProcessingStatus__c;
+addOrder.sfbase__OldMonthlyNumericValue__c=oneItem.Order.sfbase__OldMonthlyNumericValue__c;
+addOrder.sfbase__OldWeightedAverageTerm__c=oneItem.Order.sfbase__OldWeightedAverageTerm__c;
+addOrder.sfbase__OldWeightedAverageRemainingTerm__c=oneItem.Order.sfbase__OldWeightedAverageRemainingTerm__c;
+addOrder.sfbase__IsActivatedAfterDealCalculations__c=oneItem.Order.sfbase__IsActivatedAfterDealCalculations__c;
+addOrder.sfbase__NewMonthlyNumericValue__c=oneItem.Order.sfbase__NewMonthlyNumericValue__c;
+addOrder.sfbase__NewWeightedAverageTerm__c=oneItem.Order.sfbase__NewWeightedAverageTerm__c;
+
+//Not writeable
+//addOrder.sfbase__NextDealStatus__c=oneItem.Order.sfbase__NextDealStatus__c;
+addOrder.sfbase__CEOHold__c=oneItem.Order.sfbase__CEOHold__c;
+addOrder.sfbase__IncrementalACVPct__c=oneItem.Order.sfbase__IncrementalACVPct__c;
+addOrder.AePct=oneItem.Order.AePct;
+addOrder.sfbase__RMPct__c=oneItem.Order.sfbase__RMPct__c;
+addOrder.Commission_Audit_Comments__c=oneItem.Order.Commission_Audit_Comments__c;
+addOrder.sfbase__CustomerPORequired__c=oneItem.Order.sfbase__CustomerPORequired__c;
+
+addOrder.sfbase__Order_Class__c=oneItem.Order.sfbase__Order_Class__c;
+
+    // Override stuff now
+    sKey = 'Order.' + ix + '.ContractId';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addOrder.ContractId = (Id) overRideValuesMap.get (sKey);
+    }
+
+    // Now check for any override
+    sKey = 'Order.' + ix + '.EffectiveDate';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addOrder.EffectiveDate = (Date) overRideValuesMap.get (sKey);
+    }
+
+    sKey = 'Order.' + ix + '.Type';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addOrder.Type = (String) overRideValuesMap.get (sKey);
+    }
+  
+    sKey = 'Order.' + ix + '.sfbase__OrderEndDate__c';
+    if (overRideValuesMap.containsKey (sKey)) {
+      addOrder.sfbase__OrderEndDate__c = (Date) overRideValuesMap.get (sKey);
+    }
+ 
+  bOrderAdded = true;
+  createOrdersList.add (addOrder);
+  System.Debug ('Added Order For : ' + oneItem.Id);
+}
+
+//addOrderItem.OrderId = oneItem.OrderId;
+addOrderItem.sfbill__DoNotBill__c = oneItem.sfbill__DoNotBill__c;
+addOrderItem.PricebookEntryId = oneItem.PricebookEntryId;
+addOrderItem.UnitPrice = oneItem.UnitPrice;
+addOrderItem.Quantity = oneItem.Quantity;
+addOrderItem.ConfigurationType__c = oneItem.ConfigurationType__c;
+ 
+ // Now check for any item level override
+ sKey = 'OrderItem.' + ix + '.Quantity';
+ if (overRideValuesMap.containsKey (sKey)) {
+    addOrderItem.Quantity = (Double) overRideValuesMap.get (sKey);
+ }
+
+ sKey = 'OrderItem.' + ix + '.UnitPrice';
+ if (overRideValuesMap.containsKey (sKey)) {
+    addOrderItem.Quantity = (Double) overRideValuesMap.get (sKey);
+ }
+
+  createOrderItemsList.add (addOrderItem);
+
+  System.Debug ('Processing OrderItem: ' + oneItem.Id);
+}
+
+// Upsert Contract
+upsert createContractsList;
+
+// Upsert Order
+
+for (Contract c: createContractsList) {
+  for (Integer i = 0; i < createOrdersList.size(); i++) {
+     Order o = createOrdersList.get(i);
+     o.ContractId = c.Id;
+     createOrdersList.set (i, o);
+  }
+}
+
+upsert createOrdersList;
+
+// Upsert OrderItems
+
+for (Order o2: createOrdersList) {
+  for (Integer i = 0; i < createOrderItemsList.size(); i++) {
+     OrderItem oi = createOrderItemsList.get(i);
+     oi.OrderId = o2.Id;
+     createOrderItemsList.set (i, oi);
+  }
+}
+
+upsert createOrderItemsList;
+
+// All done
+// Should activate Contract and Order now if needed.
+
+if (bActivateContract) {
+  for (Integer i = 0; i < createContractsList.size(); i++) {
+     Contract c = createContractsList.get(i);
+     c.Status = 'Activated';
+     createContractsList.set (i, c);
+  }
+
+  // upsert 
+  upsert createContractsList;
+}
+
+
+if (bActivateOrder) {
+  for (Integer i = 0; i < createOrdersList.size(); i++) {
+     Order o = createOrdersList.get(i);
+     o.Status = 'Activated';
+     createOrdersList.set (i, o);
+  }
+
+  // upsert 
+  upsert createOrdersList;
+}
